@@ -1,0 +1,50 @@
+name: github pages publish
+
+on:
+  push:
+    branches:
+      - main
+  schedule:
+    - cron: "0 0 * * *"
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install pipenv and dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pipenv --upgrade-strategy=only-if-needed
+
+      - name: Get pip cache dir
+        id: pipenv-cache
+        run: echo "::set-output name=dir::$(pip cache dir)"
+
+      - name: Cache dependencies
+        uses: actions/cache@v2
+        with:
+          path: ${{ steps.pipenv-cache.outputs.dir }}
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/Pipfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Install dependencies
+        run: pipenv sync
+
+      - name: main.py
+      - run: pipenv run main
+
+      - name: Deploy
+      - uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./feeds
