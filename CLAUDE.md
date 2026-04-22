@@ -59,11 +59,8 @@ TVer は3つのホストにわたって API を叩かないと番組情報が揃
 - プレフィックス: `fix:` / `ci:` / `feat:` を日本語本文と併用（例: `fix: スクレイピングするファイルを完全に間違えていた`）
 - Dependabot は `ci:` プレフィックスで PR を作る設定（`.github/dependabot.yml`）
 
-## `@claude` で GitHub から呼び出された場合
+## 自動 PR レビュー
 
-`.github/workflows/claude.yml` が `@claude` を含む issue/PR コメントに反応して Claude Code を起動する。呼び出された Claude は次を守る:
+`.github/workflows/claude.yml` が人間の作成する PR に対して Claude Code による review を自動実行する。Dependabot PR は `github.actor != 'dependabot[bot]'` で除外（trivial bump の review に subscription quota を食わせないため）。
 
-- `feed.csv` の編集は形式厳守（`series_id,表示タイトル`、ヘッダなし、第2カラムは `main.py` から読まれない注釈）
-- `main.py` に手を入れたら live TVer API を叩いて (`uv run main.py`) 6 系列全てが生成されることを確認してから報告
-- main に直 push すると Pages が即公開されるので、コード変更は基本 PR を作り人間の merge を待つ（小さな typo 直し等は例外）
-- 依存バージョン更新は Dependabot が別途担当。`@claude` 側では pyproject.toml/uv.lock を触らない
+Review 観点は workflow 内の `prompt:` に直書きしてあるので、方針を変えるときはそこを編集。認証は `CLAUDE_CODE_OAUTH_TOKEN` secret（`claude setup-token` で発行したリポジトリオーナーの OAuth トークン）。

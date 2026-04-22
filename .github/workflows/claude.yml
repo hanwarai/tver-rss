@@ -1,33 +1,31 @@
-name: Claude Code
+name: Claude Code Review
 
 on:
-  issue_comment:
-    types: [created]
-  pull_request_review_comment:
-    types: [created]
-  issues:
-    types: [opened, assigned]
-  pull_request_review:
-    types: [submitted]
+  pull_request:
+    types: [opened, synchronize]
 
 jobs:
-  claude:
-    if: |
-      (github.event_name == 'issue_comment' && contains(github.event.comment.body, '@claude')) ||
-      (github.event_name == 'pull_request_review_comment' && contains(github.event.comment.body, '@claude')) ||
-      (github.event_name == 'pull_request_review' && contains(github.event.review.body, '@claude')) ||
-      (github.event_name == 'issues' && (contains(github.event.issue.body, '@claude') || contains(github.event.issue.title, '@claude')))
+  review:
+    if: github.actor != 'dependabot[bot]'
     runs-on: ubuntu-latest
     permissions:
-      contents: write
+      contents: read
       pull-requests: write
-      issues: write
-      id-token: write
     steps:
       - uses: actions/checkout@v6
         with:
-          fetch-depth: 1
+          fetch-depth: 0
 
       - uses: anthropics/claude-code-action@v1
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          prompt: |
+            tver-rss の CLAUDE.md と既存実装 (main.py の fetch_json + per-series try/except パターン) を参照し、この PR をレビューしてください。
+
+            重点:
+            - バグ / 未処理の例外パス / ロジックの退行
+            - 秘密情報の露出、untrusted input (workflow 編集があれば ${{ github.event.* }} 由来のシェル展開)
+            - HTTP 呼び出しに timeout / raise_for_status があるか
+            - feed.csv / pyproject.toml / uv.lock の整合性
+
+            軽微なスタイル指摘は省略。実害のある指摘のみ、日本語で簡潔に。問題なければ "LGTM" とだけ返答。
