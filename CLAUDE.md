@@ -58,9 +58,3 @@ TVer は3つのホストにわたって API を叩かないと番組情報が揃
 
 - プレフィックス: `fix:` / `ci:` / `feat:` を日本語本文と併用（例: `fix: スクレイピングするファイルを完全に間違えていた`）
 - Dependabot は `ci:` プレフィックスで PR を作る設定（`.github/dependabot.yml`）
-
-## 自動 PR レビュー
-
-`.github/workflows/claude.yml` が人間の作成する PR に対して Claude Code による review を自動実行する。Dependabot PR は `github.actor != 'dependabot[bot]'` で除外（trivial bump の review に subscription quota を食わせないため）。
-
-Review 観点は workflow 内の `prompt:` に直書きしてあるので、方針を変えるときはそこを編集。認証は `CLAUDE_CODE_OAUTH_TOKEN` secret（`claude setup-token` で発行したリポジトリオーナーの OAuth トークン）。
