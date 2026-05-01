@@ -14,37 +14,44 @@
             
             <li class="list-group-item d-flex justify-content-between align-items-center">
                 <div><a href="sr9veqmphf.xml">ゴリパラ見聞録</a></div>
-                <span class="btn btn-sm btn-primary" onClick="navigator.clipboard.writeText('/feed subscribe https://hanwarai.github.io/tver-rss/sr9veqmphf.xml');">/feed subscribe</span>
+                <span class="btn btn-sm btn-primary copy-feed-cmd" data-feed-id="sr9veqmphf">/feed subscribe</span>
             </li>
             
             <li class="list-group-item d-flex justify-content-between align-items-center">
                 <div><a href="srf5mcrw4o.xml">水曜日のダウンタウン</a></div>
-                <span class="btn btn-sm btn-primary" onClick="navigator.clipboard.writeText('/feed subscribe https://hanwarai.github.io/tver-rss/srf5mcrw4o.xml');">/feed subscribe</span>
+                <span class="btn btn-sm btn-primary copy-feed-cmd" data-feed-id="srf5mcrw4o">/feed subscribe</span>
             </li>
             
             <li class="list-group-item d-flex justify-content-between align-items-center">
                 <div><a href="srm0wbfun2.xml">いろはに千鳥</a></div>
-                <span class="btn btn-sm btn-primary" onClick="navigator.clipboard.writeText('/feed subscribe https://hanwarai.github.io/tver-rss/srm0wbfun2.xml');">/feed subscribe</span>
+                <span class="btn btn-sm btn-primary copy-feed-cmd" data-feed-id="srm0wbfun2">/feed subscribe</span>
             </li>
             
             <li class="list-group-item d-flex justify-content-between align-items-center">
                 <div><a href="srfm6u9d7w.xml">サンド伊達のコロッケあがってます</a></div>
-                <span class="btn btn-sm btn-primary" onClick="navigator.clipboard.writeText('/feed subscribe https://hanwarai.github.io/tver-rss/srfm6u9d7w.xml');">/feed subscribe</span>
+                <span class="btn btn-sm btn-primary copy-feed-cmd" data-feed-id="srfm6u9d7w">/feed subscribe</span>
             </li>
             
             <li class="list-group-item d-flex justify-content-between align-items-center">
                 <div><a href="sr3lsg7nv7.xml">ちいかわ</a></div>
-                <span class="btn btn-sm btn-primary" onClick="navigator.clipboard.writeText('/feed subscribe https://hanwarai.github.io/tver-rss/sr3lsg7nv7.xml');">/feed subscribe</span>
+                <span class="btn btn-sm btn-primary copy-feed-cmd" data-feed-id="sr3lsg7nv7">/feed subscribe</span>
             </li>
             
             <li class="list-group-item d-flex justify-content-between align-items-center">
                 <div><a href="srtxft431v.xml">名探偵コナン</a></div>
-                <span class="btn btn-sm btn-primary" onClick="navigator.clipboard.writeText('/feed subscribe https://hanwarai.github.io/tver-rss/srtxft431v.xml');">/feed subscribe</span>
+                <span class="btn btn-sm btn-primary copy-feed-cmd" data-feed-id="srtxft431v">/feed subscribe</span>
             </li>
             
         </ul>
     </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+<script>
+    document.querySelectorAll('.copy-feed-cmd').forEach((el) => {
+        el.addEventListener('click', () => {
+            navigator.clipboard.writeText(`/feed subscribe https://hanwarai.github.io/tver-rss/${el.dataset.feedId}.xml`);
+        });
+    });
+</script>
 </body>
 </html>
