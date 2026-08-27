@@ -16,7 +16,9 @@ uv run main.py              # フィード生成: feeds/*.xml と feeds/index.ht
 SSL_VERIFY=False uv run main.py   # 社内プロキシ等で自己署名証明書しか通らない環境用
 ```
 
-テストスイート・lint 設定は存在しない。動作確認は `uv run main.py` を走らせて `feeds/` 配下の XML が壊れていないかで見る。
+テストスイートは存在しない。ローカルでの動作確認は `uv run main.py` を走らせて `feeds/` 配下の XML が壊れていないかで見る。
+
+PR に対しては `.github/workflows/pr-check.yaml` がネットワーク非依存の軽量チェックだけ走らせる（`uv sync --locked` と `import main`）。TVer API を叩く実フィード生成は PR では検証されないので、main.py のロジックを変えた場合はローカルで `uv run main.py` を回すこと。
 
 ## フィードの追加・削除
 
@@ -42,9 +44,18 @@ TVer は3つのホストにわたって API を叩かないと番組情報が揃
 
 `feeds/*.xml` は `.gitignore` 対象（`/feeds/*.xml`）なので commit されない。Actions ランナー上で生成したものを `actions/upload-pages-artifact` が直接 Pages にアップする。リポジトリに tracked なのは `feeds/.gitkeep` と `feeds/index.html` のみ（`index.html` は CI で毎回上書き生成されるので、git 上のコピーは単なるスナップショット）。
 
-## デプロイ
+## CI / デプロイ
 
-`.github/workflows/gh-pages.yaml` が担う:
+ワークフローは 2 本。
+
+### `.github/workflows/pr-check.yaml` — PR 時の軽量チェック
+
+- トリガー: `main` 宛の `pull_request`
+- `uv sync --locked` で `pyproject.toml` と `uv.lock` の齟齬を検知し、`uv run --no-sync python -c "import main"` で import が通るかだけ見る
+- **ネットワーク（TVer API）は叩かない。** `main.py` は実処理が `if __name__ == '__main__'` ガード内にあるので import しても外部通信は発生しない
+- 主目的は Dependabot の依存更新をブラインドで merge しないこと。`Resolve uv version` ステップが本番と同一なので、uv ピンの読み取り方式が壊れれば PR 時点で赤くなる
+
+### `.github/workflows/gh-pages.yaml` — 本番ビルドとデプロイ
 
 - トリガー: `main` への push と毎日 00:00 UTC の cron
 - `uv run main.py` を実行し `feeds/` を `actions/upload-pages-artifact` で Pages にデプロイ
