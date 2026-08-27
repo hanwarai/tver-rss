@@ -11,7 +11,7 @@ TVer（日本の見逃し配信サービス）のシリーズ番組から Atom �
 Python は 3.13 系固定 (`pyproject.toml` / `.python-version`)、依存は uv で管理。
 
 ```bash
-uv sync                     # 依存インストール (CI は --all-extras 付き)
+uv sync                     # 依存インストール (本番 CI も同じ。PR チェックだけ --locked 付き)
 uv run main.py              # フィード生成: feeds/*.xml と feeds/index.html を出力
 SSL_VERIFY=False uv run main.py   # 社内プロキシ等で自己署名証明書しか通らない環境用
 ```
