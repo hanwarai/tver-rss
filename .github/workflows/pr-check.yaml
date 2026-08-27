@@ -1,0 +1,51 @@
+name: pr check
+
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      # gh-pages.yaml と同じロジックで pyproject.toml の uv ピンを読む。
+      # ここが落ちたら pin 方式そのものが壊れているので、本番デプロイ前に気付ける。
+      - name: Resolve uv version
+        id: uv-version
+        run: |
+          version=$(grep -oP '"uv==\K[0-9]+\.[0-9]+\.[0-9]+' pyproject.toml)
+          if [ -z "$version" ]; then
+            echo "::error::could not resolve uv version pin from pyproject.toml"
+            exit 1
+          fi
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v10.0.1
+        with:
+          version: ${{ steps.uv-version.outputs.version }}
+          enable-cache: true
+
+      - name: Setup Python
+        uses: actions/setup-python@v7
+        with:
+          python-version-file: "pyproject.toml"
+
+      # 本番の gh-pages.yaml は `uv sync` で暗黙の再解決を許すが、
+      # PR チェックでは --locked にして pyproject.toml と uv.lock の齟齬を検知する。
+      - name: Install the project
+        run: uv sync --locked
+
+      # main.py は実処理が __main__ ガード内にあるため、import しても TVer API は叩かない。
+      - name: Import check
+        run: uv run --no-sync python -c "import main"
