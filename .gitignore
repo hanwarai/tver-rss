@@ -277,4 +277,5 @@ dmypy.json
 cython_debug/
 
 /feeds/*.xml
+/feeds/index.html
 .idea/
