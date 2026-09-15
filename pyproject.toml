@@ -10,7 +10,7 @@ dependencies = [
 
 [dependency-groups]
 dev = [
-    "ruff>=0.16.6",
+    "ruff>=0.16.7",
     "mypy>=2.3.0",
     "pre-commit>=4.6.2",
     "types-requests>=2.33.0.20260712",
