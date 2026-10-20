@@ -12,7 +12,7 @@ dependencies = [
 dev = [
     "ruff>=0.17.0",
     "mypy>=2.4.0",
-    "pre-commit>=4.6.2",
+    "pre-commit>=4.7.0",
     "types-requests>=2.33.0.20261006",
 ]
 # uv 本体のバージョンピン。Dependabot (uv エコシステム) がこの行を bump し、
