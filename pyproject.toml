@@ -13,7 +13,7 @@ dev = [
     "ruff>=0.17.2",
     "mypy>=2.4.1",
     "pre-commit>=4.7.0",
-    "types-requests>=2.33.0.20261006",
+    "types-requests>=2.33.0.20261030",
 ]
 # uv 本体のバージョンピン。Dependabot (uv エコシステム) がこの行を bump し、
 # CI (.github/workflows/gh-pages.yaml) が setup-uv に渡す version をここから読む。
